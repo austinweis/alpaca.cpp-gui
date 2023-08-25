@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <!-- Link to Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <div class="h-64 overflow-y-scroll border border-gray-300 p-2 mb-4">
+                <!-- Chat messages will be displayed here -->
+                <div id="chatWindow" class="flex flex-col space-y-2">
+                    <!-- Example chat messages -->
+                    <div class="flex items-start">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex-shrink-0"></div>
+                        <div class="bg-blue-100 rounded-lg p-2">
+                            <p class="text-blue-800"></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-row-reverse items-end">
+                        <div class="w-12 h-12 bg-green-500 rounded-full flex-shrink-0 mb-auto"></div>
+                        <div class="bg-green-100 rounded-lg p-2">
+				<p class="text-green-800"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <input id="message" type="text" class="flex-grow border rounded-lg p-2" placeholder="Type your message...">
+                <button onclick="chat()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Send</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+	function chat(){
+		let newUserMessage = document.createElement("div");
+		let newUserIcon = document.createElement("div");
+		let newUserBubble = document.createElement("div");
+		newUserMessage.classList.add("flex", "flex-row-reverse", "items-end"); 
+		newUserIcon.classList.add("w-12","h-12", "bg-green-500", "rounded-full", "flex-shrink-0");
+		newUserBubble.classList.add("bg-green-100", "rounded-lg", "p-2");
+		newUserMessage.appendChild(newUserIcon);
+		newUserMessage.appendChild(newUserBubble);
+
+		let newBotMessage = document.createElement("div");
+		let newBotIcon = document.createElement("div");
+		let newBotBubble = document.createElement("div");
+		newBotMessage.classList.add("flex", "items-start");
+		newBotIcon.classList.add("w-12", "h-12", "bg-blue-500", "rounded-full", "flex-shrink-0");
+		newBotBubble.classList.add("bg-blue-100", "rounded-lg", "p-2");
+		newBotMessage.appendChild(newBotIcon);
+		newBotMessage.appendChild(newBotBubble);
+	
+		newUserBubble.innerHTML = `<p class="text-green-800">${document.getElementById("message").value}</p>`;
+		document.getElementById("message").value = "";
+
+		document.getElementById("chatWindow").appendChild(newUserMessage);
+	
+		const chatURL = {{ url_for("chat")|tojson }};
+
+		response = fetch(chatURL, {
+			"method": "POST",
+			"message": message,
+		})
+			.then(response => response.json())
+			.then(data => newBotBubble.innerHTML = `<p class="text-blue-800">${data['message']}</p>`);
+
+		document.getElementById("chatWindow").appendChild(newBotMessage);
+	}
+</script>
+
+</html>
