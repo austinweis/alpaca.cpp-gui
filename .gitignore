@@ -1,9 +1,10 @@
 .venv/
 
+*.js
 *.pyc
 __pycache__/
 
-instance/models/*
+instance/
 
 .pytest_cache/
 .coverage

@@ -12,13 +12,13 @@
 
 <body class="bg-gray-100 h-screen">
 
-    <div class="container mx-auto px-4 py-8 h-full">
+    <div class="container mx-auto px-4 pt-8 h-full">
         <div class="bg-white rounded-xl shadow-lg px-4 mb-4 flex flex-col">
             <nav class="flex justify-between items-center h-14">
-                <a class="cursor-pointer text-blue-500 hover:text-blue-800 text-lg font-bold">
+                <a href="{{ url_for('reset') }}" class="cursor-pointer text-blue-500 hover:text-blue-800 text-lg font-bold">
                     Reset Conversation
                 </a>
-                <span class="cursor-pointer bg-gray-200 bg-opacity-0 hover:bg-opacity-100 p-1 rounded-full">
+                <span onclick="open_menu()" class="cursor-pointer bg-gray-200 bg-opacity-0 hover:bg-opacity-100 p-1 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewbox="0 0 32 32" width="28" height="28">
                     <path fill="#acacac" d="M13.788295.00000132c-.529854 0-.956415.42656-.956415.9564138V3.3872986c-1.237148.3071178-2.427896.8014172-3.5466994 1.4744721L7.5716065 3.1481959c-.3746627-.3746629-.9802564-.3746629-1.3549192 0L3.1083436 6.2565387c-.3746626.3746639-.3746626.980256 0 1.3549199l1.7135742 1.7135753c-.6677867 1.1155351-1.1308327 2.3197851-1.43462 3.5466981H.95641345C.42656041 12.871732 0 13.298292 0 13.828142v4.383563c0 .529854.42656041.956414.95641345.956414H3.3474472c.307067 1.238251.8008512 2.426955 1.4744706 3.546699l-1.7135742 1.713575c-.3746626.374661-.3746626.980256 0 1.354921l3.1083437 3.108342c.3746629.374662.9802565.374662 1.3549192 0l1.7135741-1.713574c1.1236924.677719 2.3093344 1.12739 3.5466994 1.43462v2.430884c0 .529854.426561.956414.956415.956414h4.383563c.52985 0 .95641-.42656.95641-.956413v-2.430885c1.24001-.30559 2.425185-.761767 3.5467-1.43462l1.713575 1.713574c.374664.374662.980256.374662 1.35492 0l3.108343-3.108342c.374662-.374665.374662-.98026 0-1.354921l-1.713575-1.713575c.674452-1.117718 1.166647-2.315963 1.474471-3.546698h2.430885C31.57344 19.168119 32 18.741559 32 18.211705v-4.383559c0-.529854-.42656-.956414-.956413-.956414h-2.430885c-.305265-1.229683-.807668-2.433676-1.474471-3.5466981l1.713575-1.7135753c.374662-.3746639.374662-.980256 0-1.3549199l-3.108343-3.1083428c-.374664-.3746629-.980256-.3746629-1.35492 0l-1.713575 1.7135748c-1.119839-.6721555-2.314358-1.1695281-3.5467-1.4744721V.95641512c0-.5298538-.42656-.9564138-.95641-.9564138h-4.383563zm2.032377 9.96263928c1.549644-.041137 3.129994.4829094 4.343712 1.6338724 2.427433 2.301926 2.541027 6.140437.239103 8.567871-2.296244 2.421441-6.138424 2.526877-8.567871.239103-2.4274327-2.301926-2.5410282-6.140437-.239103-8.567871 1.150964-1.213716 2.674516-1.831849 4.224159-1.8729743z"/>
                 </svg>
@@ -26,15 +26,15 @@
             </nav>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg p-4 h-[90%] flex flex-col justify-between">
+        <div class="bg-white rounded-xl shadow-lg p-4 mb-8 h-[90%] flex flex-col justify-between">
             <div class="h-full overflow-y-scroll border border-gray-300 p-4 mb-4">
                 <!-- Chat messages will be displayed here -->
                 <div id="chatWindow" class="flex flex-col space-y-2">
                     <!-- Chat messages -->
                     {% for m in history %}
                     {% if m[0] != None %}
-                    <div class="flex flex-row-reverse items-end">
-                        <div class="w-12 h-12 bg-green-500 rounded-full flex-shrink-0"></div>
+                    <div class="flex items-end flex-row-reverse">
+                        <img class="w-16 h-16 bg-green-500 rounded-full flex-shrink-0">
                         <div class="bg-green-100 rounded-lg p-2 mr-2">
                             <p class="text-green-800">{{ m[0] }}</p>
                         </div>
@@ -42,7 +42,7 @@
                     {% endif %}
                     {% if m[1] != None %}
                     <div class="flex items-start">
-                        <div class="w-12 h-12 bg-blue-500 rounded-full flex-shrink-0"></div>
+                        <img src="{{ url_for('static', filename='/images/bot_portrait') }}" class="w-16 h-16 bg-blue-500 rounded-full flex-shrink-0">
                         <div class="bg-blue-100 rounded-lg p-2 ml-2">
                             <p class="text-blue-800">{{ m[1] }}</p>
                         </div>
@@ -57,24 +57,66 @@
             </div>
         </div>
     </div>
+
+    <div id="settings_menu" class="transition duration-300 opacity-0 pointer-events-none top-0 bg-gray-500 bg-opacity-50 w-full h-full fixed z-50 flex">
+        <div class="shadow-lg rounded-xl p-4 bg-white w-2/3 h-2/3 mx-auto my-auto">
+            <form class="flex flex-col h-full justify-between">
+                <div class="flex flex-col w-full items-center">
+                    <label for="context-slider" class="text-gray-400 font-bold text-lg">Context Size:</label>
+                    <div class="flex w-full space-x-2 justify-center">
+                        <input id="context-slider" class="w-1/2" type="range">
+                        <p class="text-gray-400 font-semibold align-middle">0.00</p>
+                    </div>
+                </div>
+                <div class="flex flex-col w-full items-center">
+                    <label for="context-slider" class="text-gray-400 font-bold text-lg">Context Size:</label>
+                    <div class="flex w-full space-x-2 justify-center">
+                        <input id="context-slider" class="w-1/2" type="range">
+                        <p class="text-gray-400 font-semibold align-middle">0.00</p>
+                    </div>
+                </div>
+                <div class="flex flex-col w-full items-center">
+                    <label for="context-slider" class="text-gray-400 font-bold text-lg">Context Size:</label>
+                    <div class="flex w-full space-x-2 justify-center">
+                        <input id="context-slider" class="w-1/2" type="range">
+                        <p class="text-gray-400 font-semibold align-middle">0.00</p>
+                    </div>
+                </div>
+                <div class="flex flex-col w-full items-center">
+                    <label for="context-slider" class="text-gray-400 font-bold text-lg">Context Size:</label>
+                    <div class="flex w-full space-x-2 justify-center">
+                        <input id="context-slider" class="w-1/2" type="range">
+                        <p class="text-gray-400 font-semibold align-middle">0.00</p>
+                    </div>
+                </div>
+                <div class="flex">
+                    <button onclick="close_menu()" class="mx-auto py-2 px-4 bg-red-500 hover:bg-red-800 rounded-xl text-white text-xl font-bold" type="button">Close</button>
+                    <input class="cursor-pointer mx-auto py-2 px-4 bg-green-500 hover:bg-green-600 rounded-xl text-white text-xl font-bold" type="submit" value="Update">
+                    <input class="cursor-pointer mx-auto py-2 px-4 bg-blue-500 hover:bg-blue-600 rounded-xl text-white text-xl font-bold" type="submit" value="Defaults">
+                </div>
+            </form>
+        </div>
+    </div>
+        
 </body>
 
 <script>
 	function chat(){
 		let newUserMessage = document.createElement("div");
-		let newUserIcon = document.createElement("div");
+		let newUserIcon = document.createElement("img");
 		let newUserBubble = document.createElement("div");
-		newUserMessage.classList.add("flex", "flex-row-reverse", "items-end"); 
-		newUserIcon.classList.add("w-12","h-12", "bg-green-500", "rounded-full", "flex-shrink-0");
+		newUserMessage.classList.add("flex", "flex-row-reverse"); 
+		newUserIcon.classList.add("w-16","h-16", "bg-green-500", "rounded-full", "flex-shrink-0");
 		newUserBubble.classList.add("bg-green-100", "rounded-lg", "p-2");
 		newUserMessage.appendChild(newUserIcon);
 		newUserMessage.appendChild(newUserBubble);
 
 		let newBotMessage = document.createElement("div");
-		let newBotIcon = document.createElement("div");
+		let newBotIcon = document.createElement("img");
 		let newBotBubble = document.createElement("div");
 		newBotMessage.classList.add("flex", "items-start");
-		newBotIcon.classList.add("w-12", "h-12", "bg-blue-500", "rounded-full", "flex-shrink-0");
+        //newBotIcon.setAttribute('src',');
+		newBotIcon.classList.add("w-16", "h-16", "bg-blue-500", "rounded-full", "flex-shrink-0");
 		newBotBubble.classList.add("bg-blue-100", "rounded-lg", "p-2");
 		newBotMessage.appendChild(newBotIcon);
 		newBotMessage.appendChild(newBotBubble);
@@ -100,6 +142,16 @@
         console.log("test");
 		document.getElementById("chatWindow").appendChild(newBotMessage);
 	}
+    function close_menu(){
+        let menu = document.getElementById("settings_menu");
+        menu.classList.add("opacity-0");
+        menu.classList.add("pointer-events-none");
+    }
+    function open_menu(){
+        let menu = document.getElementById("settings_menu");
+        menu.classList.remove("opacity-0");
+        menu.classList.remove("pointer-events-none");
+    }
 </script>
 
 </html>
