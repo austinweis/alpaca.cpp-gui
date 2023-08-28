@@ -3,7 +3,7 @@
 *.pyc
 __pycache__/
 
-instance/
+instance/models/*
 
 .pytest_cache/
 .coverage

@@ -15,19 +15,25 @@
             <div class="h-64 overflow-y-scroll border border-gray-300 p-2 mb-4">
                 <!-- Chat messages will be displayed here -->
                 <div id="chatWindow" class="flex flex-col space-y-2">
-                    <!-- Example chat messages -->
+                    <!-- Chat messages -->
+                    {% for m in history %}
+                    {% if m[0] != None %}
+                    <div class="flex flex-row-reverse items-end">
+                        <div class="w-12 h-12 bg-green-500 rounded-full flex-shrink-0"></div>
+                        <div class="bg-green-100 rounded-lg p-2">
+                            <p class="text-green-800">{{ m[0] }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if m[1] != None %}
                     <div class="flex items-start">
                         <div class="w-12 h-12 bg-blue-500 rounded-full flex-shrink-0"></div>
                         <div class="bg-blue-100 rounded-lg p-2">
-                            <p class="text-blue-800"></p>
+                            <p class="text-blue-800">{{ m[1] }}</p>
                         </div>
                     </div>
-                    <div class="flex flex-row-reverse items-end">
-                        <div class="w-12 h-12 bg-green-500 rounded-full flex-shrink-0 mb-auto"></div>
-                        <div class="bg-green-100 rounded-lg p-2">
-				<p class="text-green-800"></p>
-                        </div>
-                    </div>
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
             <div class="flex items-center space-x-2">
@@ -57,7 +63,12 @@
 		newBotBubble.classList.add("bg-blue-100", "rounded-lg", "p-2");
 		newBotMessage.appendChild(newBotIcon);
 		newBotMessage.appendChild(newBotBubble);
+        newBotBubble.innerHTML = '<p class="text-blue-800">...</p>'
 	
+        const message = document.getElementById("message").value;
+        let data = new FormData();
+        data.append("message", message);
+
 		newUserBubble.innerHTML = `<p class="text-green-800">${document.getElementById("message").value}</p>`;
 		document.getElementById("message").value = "";
 
@@ -67,11 +78,11 @@
 
 		response = fetch(chatURL, {
 			"method": "POST",
-			"message": message,
+			"body": data,
 		})
 			.then(response => response.json())
 			.then(data => newBotBubble.innerHTML = `<p class="text-blue-800">${data['message']}</p>`);
-
+        console.log("test");
 		document.getElementById("chatWindow").appendChild(newBotMessage);
 	}
 </script>
