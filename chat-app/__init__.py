@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, session, url_for, redirect
+from flask import Flask, render_template, request, session, url_for, redirect, send_from_directory
 from llama_cpp import Llama
 
 def create_app(test_config=None):
@@ -84,6 +84,11 @@ def create_app(test_config=None):
         seed=app.config['DEFAULT_SEED'],
         verbose=False
     )
+
+    # root static overrides
+    @app.route('/favicon.ico')
+    def static_from_root():
+        return send_from_directory(app.static_folder, request.path[1:])
 
     @app.route('/')
     def index():
