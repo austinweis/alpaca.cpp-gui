@@ -13,3 +13,5 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+chat-app/static/uploads/*

@@ -1,6 +1,7 @@
-import os
+import os, secrets, uuid, markdown
 
-from flask import Flask, render_template, request, session, url_for, redirect, send_from_directory
+from PIL import Image
+from flask import Flask, render_template, request, session, url_for, redirect, send_from_directory, flash, escape
 from llama_cpp import Llama
 
 def create_app(test_config=None):
@@ -11,32 +12,28 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'database.sqlite'),
         MODELS=os.path.join(app.instance_path, 'models'),
+        IMAGE_FORMATS={'png', 'jpg', 'jpeg', 'webp'},
+        UPLOAD_FOLDER=os.path.join(app.static_folder, 'uploads'),
 
         ALPACA_SYSTEM_STRING = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
         ### Instruction:
-        Role-play as the character that is described in the following lines. You always stay in character.
-        Your name is {char_name}
-        Your personality is as follows: {char_personality}
-        You always stay in character. You are the character described above.
+        You are {char_name} — {char_description}
 
-        The following is a set of example conversations to further inform you on how you should behave: 
-        {chat_examples}
-
-        Circumstances of the role-play for context: 
+        Current scenario:
         {scenario}
 
-        History of the role-play for context:
-        {chat_history}
+        Current interaction:
+        {history}
 
-        Respond to the following message as your character would:
+        The following message is part of the current interaction; respond to it.
 
         ### Input:
-        {user_message}
+        {user_name}: {user_message}
 
         ### Response:
         {char_name}:""",
 
-        DEFAULT_MODEL_NAME = "model.bin",
+        DEFAULT_MODEL_NAME = "ggml-Nous-Hermes-llama-2-7b-Q4_K_M.bin",
         DEFAULT_MAX_CONTEXT = 2048,
         DEFAULT_BATCH_SIZE = 256,
         DEFAULT_MAX_TOKENS = 256,
@@ -47,19 +44,11 @@ def create_app(test_config=None):
         DEFAULT_SEED = 1337,
         DEFAULT_GPU_OFFLOAD = 0,
 
-        DEFAULT_CHAR_NAME = "AI",
-        DEFAULT_CHAR_PERSONALITY = "A helpful and kind AI assistant.",
-        DEFAULT_GREETING = "Hello! What can I do for you?",
-        DEFAULT_EXAMPLES = """AI: How may I help you User?
-        User: I would love to hear a story.
-        AI: Sure thing! What would you like the story to be about?
-        User: Pirates
-        AI: There was once an invisible ship aboard which some wicked pirates lived. 
-            These pirates spent their days sailing the seas and oceans hunting for very valuable treasure – some hidden treasure that no one had ever been able to find.
-            The pirates and their ship were invisible, and you could only see it if you were a pirate too. 
-            It also meant that the pirates could get to all the hidden treasure before anyone else, for they wouldn’t leave a trace.
-        """,
-        DEFAULT_SCENARIO = "A friendly, enthusiastic AI is having a conversation with a curious human.",
+        DEFAULT_CHAR_NAME = "Robbie",
+        DEFAULT_EXAMPLES = "",
+        DEFAULT_CHAR_DESCRIPTION = "A deeply philosophic and kind artificial intelligence with vast amounts of knowledge and wisdom.",
+        DEFAULT_GREETING = "Hello, my name is Robbie. What would you like to discuss?",
+        DEFAULT_SCENARIO = "A friendly A.I. is having a conversation with a curious human.",
 
         DEFAULT_USER_NAME = "User",
     )
@@ -92,7 +81,6 @@ def create_app(test_config=None):
 
     @app.route('/')
     def index():
-        print(session.get("chat_history"))
         return render_template(
             'chat.html',
             history=session.get(
@@ -104,7 +92,8 @@ def create_app(test_config=None):
                     ]
                     ,
                 ]
-            )
+            ),
+            menu=request.args.get('show_menu')
         )
 
     @app.route('/chat', methods=['POST',])
@@ -125,11 +114,11 @@ def create_app(test_config=None):
 
         full_context = app.config['ALPACA_SYSTEM_STRING'].format(
             char_name = session.get('char_name', app.config['DEFAULT_CHAR_NAME']), 
-            char_personality = session.get('char_personality', app.config['DEFAULT_CHAR_PERSONALITY']), 
-            chat_examples = session.get('chat_examples', app.config['DEFAULT_EXAMPLES']), 
+            char_description = session.get('char_description', app.config['DEFAULT_CHAR_DESCRIPTION']), 
+            examples = session.get('chat_examples', app.config['DEFAULT_EXAMPLES']), 
             user_name = session.get('user_name', app.config['DEFAULT_USER_NAME']),
             scenario = session.get('scenario', app.config['DEFAULT_SCENARIO']), 
-            chat_history = formatted_history,
+            history = formatted_history,
             user_message = user_message)
         
         while len(llm.tokenize(full_context.encode())) > session.get('max_context', app.config['DEFAULT_MAX_CONTEXT']):            
@@ -143,11 +132,11 @@ def create_app(test_config=None):
             
             full_context = app.config['ALPACA_SYSTEM_STRING'].format(
                 char_name = session.get('char_name', app.config['DEFAULT_CHAR_NAME']), 
-                char_personality = session.get('char_personality', app.config['DEFAULT_CHAR_PERSONALITY']), 
-                chat_examples = session.get('chat_examples', app.config['DEFAULT_EXAMPLES']), 
+                char_description = session.get('char_description', app.config['DEFAULT_CHAR_DESCRIPTION']), 
+                examples = session.get('chat_examples', app.config['DEFAULT_EXAMPLES']), 
                 user_name = session.get('user_name', app.config['DEFAULT_USER_NAME']),
                 scenario = session.get('scenario', app.config['DEFAULT_SCENARIO']), 
-                chat_history = trimmed_history,
+                history = trimmed_history,
                 user_message = user_message)
 
         bot_output = llm(full_context, max_tokens=session.get('max_tokens', app.config['DEFAULT_MAX_TOKENS']), echo=False)
@@ -165,5 +154,48 @@ def create_app(test_config=None):
         if "chat_history" in session:
             session.pop("chat_history")
         return redirect(url_for('index'))
+    
+    @app.route('/update-char', methods=['POST',])
+    def update_character():
+        if request.form.get('reset-default') == '1':
+            session['char_name'] = app.config['DEFAULT_CHAR_NAME']
+            session['greeting'] = app.config['DEFAULT_GREETING']
+            session['char_description'] = app.config['DEFAULT_CHAR_DESCRIPTION']
+            session['scenario'] = app.config['DEFAULT_SCENARIO']
+            session['chat_examples'] = app.config['DEFAULT_EXAMPLES']
+            session['char_image'] = 'default.jpg'
+
+            return redirect(url_for('index', show_menu='character'))
+
+        if request.form.get('char-name') != None:
+            session['char_name'] = request.form['char-name']
+        if request.form.get('char-greeting') != None:
+            session['greeting'] = request.form['char-greeting']
+        if request.form.get('char-description'):
+            session['char_description'] = request.form['char-description']
+        if request.form.get('char-scenario') != None:
+            session['scenario'] = request.form['char-scenario']
+        if request.form.get('char-examples') != None:
+            session['chat_examples'] = request.form['char-examples']
+        
+        character_icon = request.files.get('char-image')
+        if character_icon != None and character_icon.filename != '':
+            extension = character_icon.filename.rsplit('.', 1)[1].lower()
+            if extension in app.config['IMAGE_FORMATS']:
+                img = Image.open(character_icon)
+                scale = 500 / min(img.size[0], img.size[1])
+                img = img.resize((int(scale * img.size[0]), int(scale * img.size[1])))
+                img = img.crop(box=(int(img.size[0] / 2) - 250, 0, 500 + int(img.size[0] / 2) - 250, 500))
+                file_id = str(secrets.token_hex(8))
+                session['char_image'] = '.'.join([file_id, extension])
+                img.save(os.path.join(app.config['UPLOAD_FOLDER'], '.'.join([file_id, extension])))
+            else:
+                flash('File type not supported')
+        
+        return redirect(url_for('index', show_menu='character'))
+            
+    @app.route('/update-model', methods=['POST',])
+    def update_model():
+        pass
 
     return app
