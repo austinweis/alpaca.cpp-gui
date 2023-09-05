@@ -11,7 +11,6 @@ def create_app(test_config=None):
         # app configuration
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'database.sqlite'),
-        MODELS=os.path.join(app.instance_path, 'models'),
         IMAGE_FORMATS={'png', 'jpg', 'jpeg', 'webp'},
         UPLOAD_FOLDER=os.path.join(app.static_folder, 'uploads'),
 
@@ -32,7 +31,7 @@ def create_app(test_config=None):
         ### Response:
         {char_name}:""",
 
-        DEFAULT_MODEL_NAME = "nous-hermes-llama2-13b.ggmlv3.q4_1.bin",
+        DEFAULT_MODEL_PATH = os.environ.get("MODEL_PATH", None),
         DEFAULT_MAX_CONTEXT = 2048,
         DEFAULT_BATCH_SIZE = 256,
         DEFAULT_MAX_TOKENS = 256,
@@ -64,8 +63,11 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    if app.config.get("DEFAULT_MODEL_PATH") == None:
+        raise Exception("No model selected")
+
     llm = Llama(
-        model_path=os.path.join(app.config["MODELS"], app.config['DEFAULT_MODEL_NAME']), 
+        model_path=app.config['DEFAULT_MODEL_PATH'],
         n_ctx=app.config['DEFAULT_MAX_CONTEXT'], 
         n_batch=app.config['DEFAULT_BATCH_SIZE'],
         n_threads=None,
