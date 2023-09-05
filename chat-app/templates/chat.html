@@ -11,7 +11,7 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 </head>
 
-<body class="dark:bg-slate-900 bg-gray-100 h-screen">
+<body class="dark:bg-slate-900 bg-gray-100 h-screen transition-colors">
 
     <div class="container mx-auto px-4 pt-8 h-full">
         <div class="dark:bg-slate-800 bg-white rounded-xl shadow-lg px-4 mb-4 flex flex-col">
@@ -67,17 +67,17 @@
                 <path d='M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M16.414,15 c0,0,3.139,3.139,3.293,3.293c0.391,0.391,0.391,1.024,0,1.414c-0.391,0.391-1.024,0.391-1.414,0C18.139,19.554,15,16.414,15,16.414 s-3.139,3.139-3.293,3.293c-0.391,0.391-1.024,0.391-1.414,0c-0.391-0.391-0.391-1.024,0-1.414C10.446,18.139,13.586,15,13.586,15 s-3.139-3.139-3.293-3.293c-0.391-0.391-0.391-1.024,0-1.414c0.391-0.391,1.024-0.391,1.414,0C11.861,10.446,15,13.586,15,13.586 s3.139-3.139,3.293-3.293c0.391-0.391,1.024-0.391,1.414,0c0.391,0.391,0.391,1.024,0,1.414C19.554,11.861,16.414,15,16.414,15z'/>
             </svg>
             <div class="flex -mb-16">
-                <button id="character-tab" onclick="switch_tab('character')" class="transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-10 -z-10 h-16 w-1/3 relative text-blue-500 hover:-top-20 bg-gray-200 hover:bg-white dark:bg-slate-900 hover:dark:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-16 disabled:text-gray-400 disabled:dark:bg-slate-800 disabled:bg-white disabled:cursor-default">
-                    <p class="text-center">Character</p>
+                <button id="character-tab" onclick="switch_tab('character')" class="flex flex-col transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-12 -z-10 h-16 w-1/4 relative text-blue-500 hover:-top-20 sm:hover:-top-[4.5rem] bg-gray-200 hover:bg-white dark:bg-slate-900 hover:dark:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-[4.5rem] sm:disabled:-top-[4rem] disabled:text-gray-400 disabled:dark:bg-slate-800 disabled:bg-white disabled:cursor-default">
+                    <p class="relative text-center mb-auto" style="-ms-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;" lang="en">Chara&shy;cter</p>
                 </button>
-                <button id="user-tab" onclick="switch_tab('user')" class="transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-10 -z-10 h-16 w-1/3 relative text-blue-500 hover:-top-20 bg-gray-200 dark:bg-slate-900 hover:bg-white hover:dark:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-16 disabled:text-gray-400 disabled:dark:bg-slate-800 disabled:bg-white disabled:cursor-default">
-                    <p class="text-center">User</p>
+                <button id="user-tab" onclick="switch_tab('user')" class="flex flex-col transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-12 -z-10 h-16 w-1/4 relative text-blue-500 hover:-top-20 sm:hover:-top-[4.5rem] bg-gray-200 dark:bg-slate-900 hover:bg-white hover:dark:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-[4.5rem] sm:disabled:-top-[4rem] disabled:text-gray-400 disabled:dark:bg-slate-800 disabled:bg-white disabled:cursor-default">
+                    <p class="relative text-center" style="-ms-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;" lang="en">Us&shy;er</p>
                 </button>
-                <button id="model-tab" onclick="switch_tab('model')" class="transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-10 -z-10 h-16 w-1/3 relative text-blue-500 hover:-top-20 bg-gray-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-16 disabled:text-gray-400 disabled:bg-white dark:disabled:bg-slate-800 disabled:cursor-default">
-                    <p class="text-center">Model</p>
+                <button id="model-tab" onclick="switch_tab('model')" class="flex flex-col transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-12 -z-10 h-16 w-1/4 relative text-blue-500 hover:-top-20 sm:hover:-top-[4.5rem] bg-gray-200 dark:bg-slate-900 hover:bg-white dark:hover:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-[4.5rem] sm:disabled:-top-[4rem] disabled:text-gray-400 disabled:bg-white dark:disabled:bg-slate-800 disabled:cursor-default">
+                    <p class="text-center" style="-ms-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;" lang="en">Mod&shy;el</p>
                 </button>
-                <button id="gui-tab" onclick="switch_tab('gui')" class="transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-10 -z-10 h-16 w-1/3 relative text-blue-500 hover:-top-20 bg-gray-200 dark:bg-slate-900 hover:bg-white hover:dark:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-16 disabled:text-gray-400 disabled:dark:bg-slate-800 disabled:bg-white disabled:cursor-default">
-                    <p class="text-center">Interface</p>
+                <button id="gui-tab" onclick="switch_tab('gui')" class="flex flex-col transition-all duration-200 ease-out cursor-pointer rounded-t-lg -top-12 -z-10 h-16 w-1/4 relative text-blue-500 hover:-top-20 sm:hover:-top-[4.5rem] bg-gray-200 dark:bg-slate-900 hover:bg-white hover:dark:bg-slate-800 p-2 font-bold shadow-lg disabled:-top-[4.5rem] sm:disabled:-top-[4rem] disabled:text-gray-400 disabled:dark:bg-slate-800 disabled:bg-white disabled:cursor-default">
+                    <p class="text-center" style="-ms-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;" lang="en">Inter&shy;face</p>
                 </button>
             </div>
 
@@ -103,7 +103,7 @@
                         {% endwith %}
                     </div>
                     <div class="flex flex-col w-full items-center">
-                        <label for="char-description" class="text-gray-400 font-bold text-lg">Character Personality:</label>
+                        <label for="char-description" class="text-gray-400 font-bold text-lg">Character Description:</label>
                         <textarea form="character-settings" name="char-description" id="char-description" type="text" class="dark:bg-slate-800 dark:text-white ring-2 w-5/6 h-40 ring-gray-400 rounded-lg p-1 resize-none" placeholder="Describe the character's personality.">{{ session.get('char_description', config['DEFAULT_CHAR_DESCRIPTION']) }}</textarea>
                     </div>
                     <div class="flex flex-col w-full items-center">

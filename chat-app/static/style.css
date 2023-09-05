@@ -608,6 +608,10 @@ video {
   top: 0px;
 }
 
+.-top-12 {
+  top: -3rem;
+}
+
 .-z-10 {
   z-index: -10;
 }
@@ -652,6 +656,14 @@ video {
 
 .mr-2 {
   margin-right: 0.5rem;
+}
+
+.mb-auto {
+  margin-bottom: auto;
+}
+
+.mt-0 {
+  margin-top: 0px;
 }
 
 .flex {
@@ -796,6 +808,20 @@ video {
   overflow-y: scroll;
 }
 
+.hyphens-auto {
+  -webkit-hyphens: auto;
+          hyphens: auto;
+}
+
+.break-normal {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.break-words {
+  overflow-wrap: break-word;
+}
+
 .rounded-full {
   border-radius: 9999px;
 }
@@ -916,6 +942,10 @@ video {
   padding-top: 2rem;
 }
 
+.pt-0 {
+  padding-top: 0px;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1003,6 +1033,12 @@ video {
 
 .transition-all {
   transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -1102,6 +1138,34 @@ video {
   top: -4rem;
 }
 
+.disabled\:-top-1:disabled {
+  top: -0.25rem;
+}
+
+.disabled\:-top-14:disabled {
+  top: -3.5rem;
+}
+
+.disabled\:-top-\[18\]:disabled {
+  top: -18;
+}
+
+.disabled\:-top-20:disabled {
+  top: -5rem;
+}
+
+.disabled\:-top-\[18em\]:disabled {
+  top: -18em;
+}
+
+.disabled\:-top-\[5rem\]:disabled {
+  top: -5rem;
+}
+
+.disabled\:-top-\[4\.5rem\]:disabled {
+  top: -4.5rem;
+}
+
 .disabled\:cursor-default:disabled {
   cursor: default;
 }
@@ -1193,4 +1257,56 @@ video {
 :is(.dark .disabled\:dark\:disabled\:bg-slate-800:disabled):disabled {
   --tw-bg-opacity: 1;
   background-color: rgb(30 41 59 / var(--tw-bg-opacity));
+}
+
+@media (min-width: 640px) {
+  .sm\:hover\:-top-\[4\.5rem\]:hover {
+    top: -4.5rem;
+  }
+
+  .sm\:disabled\:-top-\[4rem\]:disabled {
+    top: -4rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:-top-\[4rem\] {
+    top: -4rem;
+  }
+
+  .md\:hover\:-top-\[4rem\]:hover {
+    top: -4rem;
+  }
+
+  .md\:hover\:-top-\[4\.5rem\]:hover {
+    top: -4.5rem;
+  }
+
+  .md\:disabled\:top-16:disabled {
+    top: 4rem;
+  }
+
+  .md\:disabled\:top-14:disabled {
+    top: 3.5rem;
+  }
+
+  .md\:disabled\:-top-16:disabled {
+    top: -4rem;
+  }
+
+  .md\:disabled\:-top-14:disabled {
+    top: -3.5rem;
+  }
+
+  .disabled\:md\:-top-14:disabled {
+    top: -3.5rem;
+  }
+
+  .md\:disabled\:-top-\[4rem\]:disabled {
+    top: -4rem;
+  }
+
+  .md\:disabled\:-top-\[3\.5rem\]:disabled {
+    top: -3.5rem;
+  }
 }
