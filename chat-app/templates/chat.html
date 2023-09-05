@@ -110,10 +110,11 @@
                         <label for="char-scenario" class="text-gray-400 font-bold text-lg">Scenario:</label>
                         <textarea form="character-settings" name="char-scenario" id="char-scenario" type="text" class="dark:bg-slate-800 dark:text-white ring-2 w-5/6 h-40 ring-gray-400 rounded-lg p-1 resize-none" placeholder="Describe the circumstances of the interaction.">{{ session.get('scenario', config['DEFAULT_SCENARIO']) }}</textarea>
                     </div>
+                    <!--
                     <div class="flex flex-col w-full items-center">
                         <label for="char-examples" class="text-gray-400 font-bold text-lg">Chat Examples:</label>
                         <textarea form="character-settings" name="char-examples" id="char-examples" type="text" class="dark:bg-slate-800 dark:text-white ring-2 w-5/6 h-40 ring-gray-400 rounded-lg p-1 resize-none" placeholder="Give examples of discussion &#10;Format:&#10;Bot: Hello how may I help you today?&#10;Human: What is the meaning of life?&#10;Bot: 42 &#10; ...">{{ session.get('chat_examples', config['DEFAULT_EXAMPLES']) }}</textarea>
-                    </div>
+                    </div>-->
                 </div>
                 
                 <div class="flex w-full justify-evenly">
@@ -134,11 +135,7 @@
             </form>
             <form id='model-settings' class="flex flex-col h-full justify-between hidden">
                 <div class="flex flex-col w-full items-center">
-                    <label for="context-slider" class="text-gray-400 font-bold text-lg">Context Size:</label>
-                    <div class="flex w-full space-x-2 justify-center">
-                        <input id="context-slider" class="w-1/2" type="range">
-                        <p class="text-gray-400 font-semibold align-middle">0.00</p>
-                    </div>
+                    <p class="text-center text-gray-400 text-lg font-bold">Coming soon...</p>
                 </div>
             </form>
             <form id='gui-settings' class="flex flex-col h-full justify-between hidden">
