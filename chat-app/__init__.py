@@ -15,25 +15,24 @@ def create_app(test_config=None):
         IMAGE_FORMATS={'png', 'jpg', 'jpeg', 'webp'},
         UPLOAD_FOLDER=os.path.join(app.static_folder, 'uploads'),
 
-        ALPACA_SYSTEM_STRING = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+        ALPACA_SYSTEM_STRING = """
         ### Instruction:
+        Role play as the character described below. You always stay in character.
         You are {char_name} — {char_description}
+        Remember, you always stay in character. You are the character described above.
 
-        Current scenario:
-        {scenario}
-
-        Current interaction:
-        {history}
-
-        The following message is part of the current interaction; respond to it.
+        The circumstances of the roleplay are: {scenario}
+        
+        Repond to the dialogue below as your character would.
 
         ### Input:
+        {history}
         {user_name}: {user_message}
 
         ### Response:
         {char_name}:""",
 
-        DEFAULT_MODEL_NAME = "ggml-Nous-Hermes-llama-2-7b-Q4_K_M.bin",
+        DEFAULT_MODEL_NAME = "nous-hermes-llama2-13b.ggmlv3.q4_1.bin",
         DEFAULT_MAX_CONTEXT = 2048,
         DEFAULT_BATCH_SIZE = 256,
         DEFAULT_MAX_TOKENS = 256,
@@ -138,8 +137,8 @@ def create_app(test_config=None):
                 scenario = session.get('scenario', app.config['DEFAULT_SCENARIO']), 
                 history = trimmed_history,
                 user_message = user_message)
-
-        bot_output = llm(full_context, max_tokens=session.get('max_tokens', app.config['DEFAULT_MAX_TOKENS']), echo=False)
+        
+        bot_output = llm(full_context, stop=[f"{session.get('user_name', app.config['DEFAULT_USER_NAME'])}: ", "### Response:", "### Input:", "The following message is part of the current interaction; respond to it."], max_tokens=session.get('max_tokens', app.config['DEFAULT_MAX_TOKENS']), echo=False)
         bot_message = bot_output['choices'][0]['text']
         
         # add messages to history
@@ -155,6 +154,13 @@ def create_app(test_config=None):
             session.pop("chat_history")
         return redirect(url_for('index'))
     
+    @app.route('/update-user', methods=['POST',])
+    def update_user():
+        if request.form.get('user-name') != None:
+            session['user_name'] = request.form['user-name']
+        
+        return redirect(url_for('index', show_menu='user'))
+
     @app.route('/update-char', methods=['POST',])
     def update_character():
         if request.form.get('reset-default') == '1':

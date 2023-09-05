@@ -2,6 +2,7 @@
 
 *.js
 *.pyc
+*.json
 __pycache__/
 
 instance/
@@ -15,3 +16,5 @@ build/
 *.egg-info/
 
 chat-app/static/uploads/*
+node_modules/
+input.css
