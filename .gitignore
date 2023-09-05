@@ -16,5 +16,6 @@ build/
 *.egg-info/
 
 chat-app/static/uploads/*
+!chat-app/static/uploads/default.*
 node_modules/
 input.css
