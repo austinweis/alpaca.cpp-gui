@@ -93,8 +93,7 @@ def create_app(test_config=None):
                     ]
                     ,
                 ]
-            ),
-            menu=request.args.get('show_menu')
+            )
         )
 
     @app.route('/chat', methods=['POST',])
@@ -161,7 +160,7 @@ def create_app(test_config=None):
         if request.form.get('user-name') != None:
             session['user_name'] = request.form['user-name']
         
-        return redirect(url_for('index', show_menu='user'))
+        return redirect(url_for('index'))
 
     @app.route('/update-char', methods=['POST',])
     def update_character():
@@ -173,7 +172,7 @@ def create_app(test_config=None):
             session['chat_examples'] = app.config['DEFAULT_EXAMPLES']
             session['char_image'] = 'default.jpg'
 
-            return redirect(url_for('index', show_menu='character'))
+            return redirect(url_for('index'))
 
         if request.form.get('char-name') != None:
             session['char_name'] = request.form['char-name']
@@ -200,7 +199,7 @@ def create_app(test_config=None):
             else:
                 flash('File type not supported')
         
-        return redirect(url_for('index', show_menu='character'))
+        return redirect(url_for('index'))
             
     @app.route('/update-model', methods=['POST',])
     def update_model():

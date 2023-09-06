@@ -234,25 +234,20 @@
                     "redirect" : 'follow',
 			        "body": data,
 		        }).then(
-                    response => {
+                    () => {
                         document.getElementById('char-name').value = '{{ config["DEFAULT_CHAR_NAME"] }}';
                         document.getElementById('char-greeting').value = '{{ config["DEFAULT_GREETING"] }}';
                         document.getElementById('char-description').value = '{{ config["DEFAULT_CHAR_DESCRIPTION"] }}';
                         document.getElementById('char-scenario').value = '{{ config["DEFAULT_SCENARIO"] }}';
-                        document.getElementById('char-examples').value = '{{ config["DEFAULT_EXAMPLES"] }}';
 
                         let char_icons = document.getElementsByName('char-icon');
                         for (i = 0; i < char_icons.length; ++i){
+                            console.log("test");
                             char_icons[i].setAttribute('src', '{{ url_for("static", filename="uploads/default.jpg") }}');
                         }
-
-                        return response;
                     }
                 ).then(
-                    response =>
-                    {
-                        window.location.href = response.url;
-                    }
+                    () => {window.location.reload();}
                 );
  
 
@@ -271,11 +266,6 @@
         } else {
             document.documentElement.classList.remove('dark');
         }
-    }
-
-    if ('{{ menu }}' != 'None' && '{{ menu }} != ""')
-    {
-        open_menu('{{ menu }}');
     }
 
     window
