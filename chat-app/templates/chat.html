@@ -93,7 +93,7 @@
                     </div>
                     <div class="flex flex-col">
                         <label for="char-image" class="mx-auto text-gray-400 font-bold text-lg">Character Image:</label>
-                        <input form="character-settings" name="char-image" id="char-image" class="transition duration-200 ease-in-out file:border-solid file:border-inherit file:border-0 file:cursor-pointer file:border-r-2 file:border-r-gray-400 file:p-1 file:rounded-none rounded-lg bg-white ring-gray-400 ring-2 mx-auto w-1/2 dark:bg-slate-800 dark:text-white dark:file:bg-slate-800 dark:file:text-white dark:hover:file:bg-gray-400" type="file">
+                        <input accept="image/*"form="character-settings" name="char-image" id="char-image" class="transition duration-200 ease-in-out file:border-solid file:border-inherit file:border-0 file:cursor-pointer file:border-r-2 file:border-r-gray-400 file:p-1 file:rounded-none rounded-lg bg-white ring-gray-400 ring-2 mx-auto w-1/2 dark:bg-slate-800 dark:text-white dark:file:bg-slate-800 dark:file:text-white dark:hover:file:bg-gray-400" type="file">
                         {% with messages = get_flashed_messages() %}
                         {% if messages %}
                             {% for message in messages %}
@@ -115,6 +115,11 @@
                         <label for="char-examples" class="text-gray-400 font-bold text-lg">Chat Examples:</label>
                         <textarea form="character-settings" name="char-examples" id="char-examples" type="text" class="dark:bg-slate-800 dark:text-white ring-2 w-5/6 h-40 ring-gray-400 rounded-lg p-1 resize-none" placeholder="Give examples of discussion &#10;Format:&#10;Bot: Hello how may I help you today?&#10;Human: What is the meaning of life?&#10;Bot: 42 &#10; ...">{{ session.get('chat_examples', config['DEFAULT_EXAMPLES']) }}</textarea>
                     </div>-->
+                    <div class="flex w-full justify-evenly">
+                        <label for="import_json" class="cursor-pointer py-2 px-4 bg-green-500 hover:bg-green-600 rounded-xl text-white text-lg font-bold">Import</label>
+                        <input id="import_json" onclick="import_char()" class="hidden" type="file" accept=".json">
+                        <input onclick="export_char()" class="cursor-pointer py-2 px-4 bg-blue-500 hover:bg-blue-600 rounded-xl text-white text-lg font-bold" type="button" value="Export">
+                    </div>
                 </div>
                 
                 <div class="flex w-full justify-evenly">
@@ -192,8 +197,8 @@
 			"method": "POST",
 			"body": data,
 		})
-			.then(response => response.json())
-			.then(data => newBotBubble.innerHTML = `<p class="text-blue-800">${data['message']}</p>`);
+		.then(response => response.json())
+		.then(data => newBotBubble.innerHTML = `<p class="text-blue-800">${data['message']}</p>`);
 		document.getElementById("chatWindow").appendChild(newBotMessage);
 	}
     function switch_tab(id){
@@ -243,7 +248,7 @@
                         let char_icons = document.getElementsByName('char-icon');
                         for (i = 0; i < char_icons.length; ++i){
                             console.log("test");
-                            char_icons[i].setAttribute('src', '{{ url_for("static", filename="uploads/default.jpg") }}');
+                            char_icons[i].setAttribute('src', '{{ url_for("static", filename="uploads/default.png") }}');
                         }
                     }
                 ).then(
@@ -268,6 +273,24 @@
         }
     }
 
+    function downloadObjectAsJson(exportObj, exportName){
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+        var downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href",     dataStr);
+        downloadAnchorNode.setAttribute("download", exportName + ".json");
+        downloadAnchorNode.click();
+    }
+
+    function export_char(){
+        json = {
+            name: document.getElementById('char-name').value,
+            first_mes: document.getElementById('char-greeting').value,
+            description: document.getElementById('char-description').value,
+            scenario: document.getElementById('char-scenario').value
+        };
+        downloadObjectAsJson(json, json.name + "-char");
+    }
+
     window
 	.matchMedia("(prefers-color-scheme: dark)")
 	.addEventListener("change", function (e) {
@@ -281,6 +304,29 @@
 		    }
         }
 	});
+
+    document.getElementById('import_json').addEventListener('change', function(e) {
+    if (e.target.files[0]) {
+            let file = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsText(file);
+ 
+            reader.onload = (() => {
+                json = JSON.parse(reader.result);
+                var keys = Object.keys(json);
+                if (['description', 'name', 'scenario', 'first_mes'].every(i => keys.includes(i))){
+                    document.getElementById('char-name').value = json.name;
+                    document.getElementById('char-greeting').value = json.first_mes;
+                    document.getElementById('char-description').value = json.description;
+                    document.getElementById('char-scenario').value = json.scenario;
+                }
+                else{
+                    alert("Required fields not found");
+                }
+                
+            });
+        }
+    });
 
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');

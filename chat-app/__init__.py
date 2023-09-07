@@ -170,7 +170,7 @@ def create_app(test_config=None):
             session['char_description'] = app.config['DEFAULT_CHAR_DESCRIPTION']
             session['scenario'] = app.config['DEFAULT_SCENARIO']
             session['chat_examples'] = app.config['DEFAULT_EXAMPLES']
-            session['char_image'] = 'default.jpg'
+            session['char_image'] = 'default.png'
 
             return redirect(url_for('index'))
 
