@@ -12,5 +12,5 @@ git clone https://github.com/austinweis/alpaca.cpp-gui
 ### Run:
 ``` bash
 cd alpaca.cpp-gui
-sh run.sh
+sh run.sh <path to gguf model>
 ```
